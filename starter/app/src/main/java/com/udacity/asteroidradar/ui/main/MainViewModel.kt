@@ -8,30 +8,62 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val asteroidRepo: AsteroidRepo,
-) : ViewModel() {
-
-    init {
-        getAsteroid()
-        getPhotoOfTheDay()
-    }
+) : ViewModel(), LifecycleEventObserver {
 
     private val _loader = MutableLiveData(false)
     val loader: LiveData<Boolean>
         get() = _loader
 
-    val asteroidResponseLiveData: LiveData<List<Asteroid>> = asteroidRepo.asteroidLiveData
+    private val filter = MutableLiveData(AsteroidFilter.WEEK)
+
+    val asteroidResponseLiveData: LiveData<List<Asteroid>> = Transformations.switchMap(filter) {
+        when (it) {
+            AsteroidFilter.TODAY -> asteroidRepo.asteroidTodayLiveData
+            AsteroidFilter.WEEK -> asteroidRepo.asteroidWeekLiveData
+            else -> asteroidRepo.asteroidSavedLiveData
+        }
+    }
+
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        if (event == Lifecycle.Event.ON_CREATE) {
+            getAsteroid()
+            getPhotoOfTheDay()
+        }
+    }
 
     private fun getAsteroid() {
         viewModelScope.launch {
-            asteroidRepo.getAsteroids()
+            try {
+                _loader.postValue(true)
+                asteroidRepo.getAsteroids()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _loader.value = false
+            }
         }
     }
 
     val photoOfDayLiveData: LiveData<PictureOfDay?> = asteroidRepo.pictureOfDayMutableLiveData
     private fun getPhotoOfTheDay() {
         viewModelScope.launch {
-            asteroidRepo.getPhotoOfTheDay()
+            try {
+                _loader.postValue(true)
+                asteroidRepo.getPhotoOfTheDay()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _loader.value = false
+            }
         }
+    }
+
+    fun updateFilter(filter: AsteroidFilter) {
+        this.filter.value = filter
+    }
+
+    enum class AsteroidFilter(val value: String) {
+        SAVED("saved"), TODAY("today"), WEEK("week")
     }
 
     companion object {

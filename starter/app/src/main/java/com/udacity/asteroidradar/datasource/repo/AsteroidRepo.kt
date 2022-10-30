@@ -18,17 +18,28 @@ class AsteroidRepo(
     private val asteroidDao: AsteroidDao,
     private val asteroidApi: AsteroidApi,
 ) {
-    val asteroidLiveData: LiveData<List<Asteroid>>
+    private val todayDate = Calendar.getInstance().toFormattedDate()
+    private val weekDate = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -7) }.toFormattedDate()
+    val asteroidSavedLiveData: LiveData<List<Asteroid>>
         get() =
-            Transformations.map(asteroidDao.getAsteroid()) {
+            Transformations.map(asteroidDao.getSavedAsteroid()) {
+                it.toDomain()
+            }
+    val asteroidTodayLiveData: LiveData<List<Asteroid>>
+        get() =
+            Transformations.map(asteroidDao.getTodayAsteroid(todayDate)) {
+                it.toDomain()
+            }
+    val asteroidWeekLiveData: LiveData<List<Asteroid>>
+        get() =
+            Transformations.map(asteroidDao.getWeekAsteroid(weekDate)) {
                 it.toDomain()
             }
 
     suspend fun getAsteroids() {
         val remoteResult = asteroidApi.getAsteroidsString(
-            Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -7) }
-                .toFormattedDate(),
             Calendar.getInstance().toFormattedDate(),
+            Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, +7) }.toFormattedDate(),
         )
         asteroidDao.deleteAsteroid()
         asteroidDao.insert(*parseAsteroidsJsonResult(JSONObject(remoteResult)).toDatabaseModel()

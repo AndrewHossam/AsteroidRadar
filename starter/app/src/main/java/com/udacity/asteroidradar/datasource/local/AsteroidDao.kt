@@ -16,5 +16,11 @@ interface AsteroidDao {
     suspend fun deleteAsteroid()
 
     @Query("Select * from AsteroidDB")
-    fun getAsteroid(): LiveData<List<AsteroidDB>>
+    fun getSavedAsteroid(): LiveData<List<AsteroidDB>>
+
+    @Query("Select * from AsteroidDB where date(closeApproachDate) = :date")
+    fun getTodayAsteroid(date: String): LiveData<List<AsteroidDB>>
+
+    @Query("Select * from AsteroidDB where date(closeApproachDate) >= :date")
+    fun getWeekAsteroid(date: String): LiveData<List<AsteroidDB>>
 }

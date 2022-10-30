@@ -29,6 +29,8 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        lifecycle.addObserver(viewModel)
+
         binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
@@ -66,6 +68,17 @@ class MainFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.show_week -> {
+                viewModel.updateFilter(MainViewModel.AsteroidFilter.WEEK)
+            }
+            R.id.show_today -> {
+                viewModel.updateFilter(MainViewModel.AsteroidFilter.TODAY)
+            }
+            R.id.show_saved -> {
+                viewModel.updateFilter(MainViewModel.AsteroidFilter.SAVED)
+            }
+        }
         return true
     }
 }

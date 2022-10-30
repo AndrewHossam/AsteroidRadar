@@ -9,6 +9,7 @@
         <item name="background">@color/app_background</item>
         <item name="android:background">@color/app_background</item>
         <item name="android:textColor">@color/default_text_color</item>
+        <item name="colorOnSurface">@color/default_text_color</item>
         <item name="fontFamily">@font/roboto</item>
         <item name="android:fontFamily">@font/roboto</item>
     </style>
