@@ -9,10 +9,11 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class App : Application() {
+
     private val applicationScope = CoroutineScope(Dispatchers.Default)
+
     override fun onCreate() {
         super.onCreate()
-
         startWorker()
     }
 

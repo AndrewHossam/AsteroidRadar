@@ -9,15 +9,16 @@ import com.squareup.picasso.Picasso
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.datasource.local.AsteroidDatabase
-import com.udacity.asteroidradar.datasource.remote.Network
+import com.udacity.asteroidradar.datasource.local.AsteroidLocalDataSourceImp
+import com.udacity.asteroidradar.datasource.local.AsteroidRemoteDataSourceImp
 import com.udacity.asteroidradar.datasource.repo.AsteroidRepo
 
 class MainFragment : Fragment() {
 
     private val asteroidRepo by lazy {
         AsteroidRepo(
-            AsteroidDatabase.getInstance(requireContext()).asteroidDao,
-            Network.asteroidApi.value
+            AsteroidLocalDataSourceImp(AsteroidDatabase.getInstance(requireContext()).asteroidDao),
+            AsteroidRemoteDataSourceImp()
         )
     }
     private val viewModel: MainViewModel by viewModels {
