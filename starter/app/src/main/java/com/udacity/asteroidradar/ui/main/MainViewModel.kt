@@ -2,12 +2,13 @@ package com.udacity.asteroidradar.ui.main
 
 import androidx.lifecycle.*
 import com.udacity.asteroidradar.datasource.repo.AsteroidRepo
+import com.udacity.asteroidradar.datasource.repo.IAsteroidRepo
 import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.domain.PictureOfDay
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val asteroidRepo: AsteroidRepo,
+    private val asteroidRepo: IAsteroidRepo,
 ) : ViewModel(), LifecycleEventObserver {
 
     private val _loader = MutableLiveData(false)

@@ -12,18 +12,11 @@ import com.udacity.asteroidradar.datasource.local.AsteroidDatabase
 import com.udacity.asteroidradar.datasource.local.AsteroidLocalDataSourceImp
 import com.udacity.asteroidradar.datasource.local.AsteroidRemoteDataSourceImp
 import com.udacity.asteroidradar.datasource.repo.AsteroidRepo
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainFragment : Fragment() {
 
-    private val asteroidRepo by lazy {
-        AsteroidRepo(
-            AsteroidLocalDataSourceImp(AsteroidDatabase.getInstance(requireContext()).asteroidDao),
-            AsteroidRemoteDataSourceImp()
-        )
-    }
-    private val viewModel: MainViewModel by viewModels {
-        MainViewModel.Companion.ViewModelFactory(asteroidRepo)
-    }
+    private val viewModel: MainViewModel by viewModel()
 
     private lateinit var binding: FragmentMainBinding
     override fun onCreateView(
